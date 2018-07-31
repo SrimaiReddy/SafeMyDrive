@@ -84,10 +84,6 @@ LoginSchema.statics.findByUser = function (email){
         if(!user){
             return Promise.reject();
         }
-        console.log(user.password);
-        var salt = bcrypt.genSaltSync(10);
-        var hash = bcrypt.hashSync(user.password,salt);
-        console.log("Password from db",hash);
         return new Promise((resolve, reject) =>{
             //Use bcrypt.compare to compare password and user.password
                 if(resolve){

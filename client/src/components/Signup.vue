@@ -9,18 +9,19 @@
     <div class="form-group" :class="{invalid: $v.email.$error}">
         <input type="email" class="form-control" placeholder="Email" v-model="email" @blur="$v.email.$touch()">
         <p v-if="!$v.email.email">Please provide a valid email address.</p>
+        <p v-if="!$v.email.unique">This email already registerd!!</p>
     </div>
     <div class="form-group" :class="{invalid: $v.password.$error}">
         <input type="password" id="password" class="form-control" placeholder="Password" required="required" v-model="password" @blur="$v.password.$touch()">
     </div>
-    <div class="form-group">
-        <input type="password" id="confirm_password" class="form-control" placeholder="Confirm Password" required="required" v-model="confirmPassword">
+    <div class="form-group" :class="{invalid: $v.confirmPassword.$error}">
+        <input type="password" id="confirm_password" class="form-control" placeholder="Confirm Password" required="required" v-model="confirmPassword" @blur="$v.confirmPassword.$touch()">
     </div>
     <div class="form-group">
         <label class="checkbox-inline"><input type="checkbox" required="required"> I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a></label>
     </div>
     <div class="form-group">
-    <button type="submit" class="btn btn-success btn-lg btn-block">Register Now</button>
+    <button type="submit" class="btn btn-success btn-lg btn-block" :disabled="$v.$invalid" >Register Now</button>
 </div>
 <div class="text-center">Already have an account? <a href="#">Sign in</a></div>
 </div>
@@ -28,7 +29,8 @@
 </div>
 </template>
 <script>
-import {required, email, minLength,sameAs} from 'vuelidate/lib/validators'
+import axios from "axios"
+import {required, email, minLength, sameAs} from 'vuelidate/lib/validators'
 
 export default {
   data () {
@@ -42,7 +44,11 @@ export default {
   validations: {
     email: {
       required,
-      email
+      email,
+      unique: val => {
+        if (val === '') return true
+        return 
+      }
     },
     fullname: {
       required
@@ -52,7 +58,7 @@ export default {
       minLen: minLength(6)
     },
     confirmPassword: {
-
+      sameAs: sameAs('password')
     }
   }
 }

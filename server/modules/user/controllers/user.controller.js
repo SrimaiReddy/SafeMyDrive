@@ -4,6 +4,18 @@ var { mongoose } = require('./../../../db/mongoose');
 var { Login } = require('./user.schemas');
 var {tokencheck} = require('./../../../middleware/tokencheck');
 
+let validateUser = (req, res) => {
+    var body = _.pick(req.body,['email']);
+    console.log(body.email);
+    Login.findByUser(body.email).then((user) =>{
+        console.log(user.email);
+        return res.send(true);
+    }).catch((e) => {
+        res.status(400).send("User details not found!!");
+    });
+}
+module.exports.validateUser = validateUser;
+
 let signUp = (req,res) => {
     var body = _.pick(req.body,['email','password']);
     var login = new Login(body);

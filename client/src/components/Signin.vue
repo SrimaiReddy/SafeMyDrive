@@ -1,6 +1,5 @@
 <template>
   <div class="hello">
-
     <p> SignIn Page </p>
     <h2>Essential Links</h2>
   </div>
