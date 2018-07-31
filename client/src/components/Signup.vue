@@ -3,17 +3,18 @@
 <div class="card">
 <div class="card-body">
     <h2>Register</h2>
-    <div class="form-group">
-        <input type="text" class="form-control" name="first_name" placeholder="Full Name" required="required">
+    <div class="form-group" :class="{invalid: $v.fullname.$error}">
+        <input type="text"  class="form-control" placeholder="Full Name" v-model="fullname" @blur="$v.fullname.$touch()" auto>
+    </div>
+    <div class="form-group" :class="{invalid: $v.email.$error}">
+        <input type="email" class="form-control" placeholder="Email" v-model="email" @blur="$v.email.$touch()">
+        <p v-if="!$v.email.email">Please provide a valid email address.</p>
+    </div>
+    <div class="form-group" :class="{invalid: $v.password.$error}">
+        <input type="password" id="password" class="form-control" placeholder="Password" required="required" v-model="password" @blur="$v.password.$touch()">
     </div>
     <div class="form-group">
-        <input type="email" class="form-control" name="email" placeholder="Email" required="required">
-    </div>
-    <div class="form-group">
-        <input type="password" class="form-control" name="password" placeholder="Password" required="required">
-    </div>
-    <div class="form-group">
-        <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password" required="required">
+        <input type="password" id="confirm_password" class="form-control" placeholder="Confirm Password" required="required" v-model="confirmPassword">
     </div>
     <div class="form-group">
         <label class="checkbox-inline"><input type="checkbox" required="required"> I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a></label>
@@ -26,22 +27,47 @@
 </div>
 </div>
 </template>
+<script>
+import {required, email, minLength,sameAs} from 'vuelidate/lib/validators'
+
+export default {
+  data () {
+    return {
+      fullname: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+    }
+  },
+  validations: {
+    email: {
+      required,
+      email
+    },
+    fullname: {
+      required
+    },
+    password: {
+      required,
+      minLen: minLength(6)
+    },
+    confirmPassword: {
+
+    }
+  }
+}
+</script>
+
 <style>
+  .form-group.invalid input {
+    background-color: rgb(238, 169, 169);
+  }
+    .form-group.invalid label {
+    background-color: rgb(238, 169, 169);
+  }
 body {
   color: #fff;
   font-family: "Roboto", sans-serif;
-}
-.form-control {
-  height: 40px;
-  box-shadow: none;
-  color: #969fa4;
-}
-.form-control:focus {
-  border-color: #5cb85c;
-}
-.form-control,
-.btn {
-  border-radius: 3px;
 }
 .signup-form {
   width: 400px;
@@ -70,49 +96,10 @@ body {
 .signup-form h2:after {
   right: 0;
 }
-.signup-form .hint-text {
-  color: #999;
-  margin-bottom: 30px;
-  text-align: center;
-}
-.signup-form form {
-  color: #999;
-  border-radius: 3px;
-  margin-bottom: 15px;
-  background: #f2f3f7;
-  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-  padding: 30px;
-}
-.signup-form .form-group {
-  margin-bottom: 20px;
-}
-.signup-form input[type="checkbox"] {
-  margin-top: 3px;
-}
 .signup-form .btn {
   font-size: 16px;
   font-weight: bold;
   min-width: 140px;
   outline: none !important;
-}
-.signup-form .row div:first-child {
-  padding-right: 10px;
-}
-.signup-form .row div:last-child {
-  padding-left: 10px;
-}
-.signup-form a {
-  color:blue;
-  text-decoration: underline;
-}
-.signup-form a:hover {
-  text-decoration: none;
-}
-.signup-form form a {
-  color: #5cb85c;
-  text-decoration: none;
-}
-.signup-form form a:hover {
-  text-decoration: underline;
 }
 </style>
