@@ -1,20 +1,70 @@
 <template>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="navbar-header">
-  <router-link to="/" class="navbar-brand">SafeMyDrive</router-link>
-  </div>
-  <div class="collapse navbar-collapse">
-    <ul class="nav navbar-nav mr-auto">
-       <router-link to="/home" activeClass="active" tag="li"><a>Home</a></router-link>
-    </ul>
-    <ul class="nav navbar-nav navbar-right">
-      <router-link to="/signup" tag="li"><a>Sign Up</a></router-link>
-      <router-link to="/signin" tag="li"><a>Sign In</a></router-link>
-    </ul>
-  </div>
-</nav>
+  <header id="header">
+    <div class="logo">
+      <router-link to="/">SafeMyDrive</router-link>
+    </div>
+    <nav>
+      <ul>
+        <li v-if="auth">
+          <router-link to="/signup">Sign Up</router-link>
+        </li>
+        <li v-if="auth">
+          <router-link to="/signin">Sign In</router-link>
+        </li>
+        <li v-if="!auth">
+          <router-link to="/dashboard">Dashboard</router-link>
+        </li>
+        <li v-if="!auth">
+          <button @click.prevent="onLogout" class="logout">Logout</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
 </template>
-<style>
+
+<script>
+import User from '@/services/auth'
+export default {
+  computed: {
+    auth () {
+      return User.check() // this.$store.getters.isAuthenticated
+    }
+  },
+  methods: {
+    onLogout () {
+      localStorage.removeItem('token')
+      this.loggedIn = User.check()
+      this.$router.push({ path: '/signin' })
+    }
+  }
+}
+</script>
+
+<style scoped>
+  #header {
+    height: 56px;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #212529;
+    padding: 0 20px;
+  }
+
+  .logo {
+    font-weight: bold;
+    color: white;
+  }
+
+  .logo a {
+    text-decoration: none;
+    color: white;
+  }
+
+  nav {
+    height: 100%;
+  }
+
   ul {
     list-style: none;
     margin: 0;
@@ -38,5 +88,13 @@
   li a:active,
   li a.router-link-active {
     color: #fa923f;
+  }
+
+  .logout {
+    background-color: transparent;
+    border: none;
+    font: inherit;
+    color: white;
+    cursor: pointer;
   }
 </style>

@@ -5,26 +5,30 @@ var { Login } = require('./user.schemas');
 var {tokencheck} = require('./../../../middleware/tokencheck');
 
 let validateUser = (req, res) => {
-    var body = _.pick(req.body,['email']);
-    console.log(body.email);
-    Login.findByUser(body.email).then((user) =>{
-        console.log(user.email);
-        return res.send(true);
+    var body = _.pick(req.body,['val']);
+    console.log(body.val);
+    Login.findByUser(body.val).then((user) =>{
+        if(user)
+        return res.json({ code: 200, message: true});           
     }).catch((e) => {
-        res.status(400).send("User details not found!!");
+        return res.json({ code: 400, message: false});          
     });
 }
 module.exports.validateUser = validateUser;
 
 let signUp = (req,res) => {
-    var body = _.pick(req.body,['email','password']);
+    var body = _.pick(req.body,['fullname','email','password']);
+    console.log(body.email);
     var login = new Login(body);
+    console.log(body.email);
     login.token = login.generateAuthToken();
     login.save().then((user) => {
-    res.header('x-auth', user.token).send(login);
+        if(user)
+        return res.json({ code: 200, message: true});           
+//        res.header('x-auth', user.token).send(login);
     }).catch((e) => {
-        console.log("error" + e);
-        res.status(400).send(e);
+        console.log(e);
+        return res.json({ code: 400, message: e});        
     })
 }
 

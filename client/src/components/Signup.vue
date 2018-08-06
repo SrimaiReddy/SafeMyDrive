@@ -1,35 +1,40 @@
 <template>
 <div class="signup-form">
+   <form>
 <div class="card">
 <div class="card-body">
     <h2>Register</h2>
     <div class="form-group" :class="{invalid: $v.fullname.$error}">
-        <input type="text"  class="form-control" placeholder="Full Name" v-model="fullname" @blur="$v.fullname.$touch()" auto>
+        <input type="text"  class="form-control" placeholder="Full Name" v-model="fullname" @blur="$v.fullname.$touch()" auto required="required">
     </div>
     <div class="form-group" :class="{invalid: $v.email.$error}">
-        <input type="email" class="form-control" placeholder="Email" v-model="email" @blur="$v.email.$touch()">
+        <input type="email" class="form-control" placeholder="Email" v-model.lazy="email" @blur="$v.email.$touch()">
         <p v-if="!$v.email.email">Please provide a valid email address.</p>
-        <p v-if="!$v.email.unique">This email already registerd!!</p>
+        <p v-if="!$v.email.isUnique">This email id already registered</p>
     </div>
     <div class="form-group" :class="{invalid: $v.password.$error}">
-        <input type="password" id="password" class="form-control" placeholder="Password" required="required" v-model="password" @blur="$v.password.$touch()">
+        <input type="password" class="form-control" placeholder="Password" required="required" v-model.lazy="password" @blur="$v.password.$model">
+        <p v-if="!$v.password.minLength"> Password must have at least {{ $v.password.$params.minLength.min }} letters. </p>
     </div>
-    <div class="form-group" :class="{invalid: $v.confirmPassword.$error}">
-        <input type="password" id="confirm_password" class="form-control" placeholder="Confirm Password" required="required" v-model="confirmPassword" @blur="$v.confirmPassword.$touch()">
+    <div class="form-group" :class="{invalid: $v.repeatPassword.$error}">
+        <input type="password" class="form-control" placeholder="Confirm Password" v-model="repeatPassword">
+        <p v-if="!$v.repeatPassword.sameAsPassword"> Password must be identical. </p>
     </div>
-    <div class="form-group">
-        <label class="checkbox-inline"><input type="checkbox" required="required"> I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a></label>
-    </div>
-    <div class="form-group">
-    <button type="submit" class="btn btn-success btn-lg btn-block" :disabled="$v.$invalid" >Register Now</button>
+  <div class="form-group" :class="{invalid: $v.terms.$invalid}">
+          <input type="checkbox" id="terms" @change="$v.terms.$touch()" v-model="terms">
+          <label for="terms">Accept Terms of Use</label>
+  </div>
+<div class="form-group">
+    <button type="submit" class="btn btn-success btn-lg btn-block" :disabled="$v.$invalid" @click="OnRegister">Register Now</button>
 </div>
 <div class="text-center">Already have an account? <a href="#">Sign in</a></div>
 </div>
 </div>
+   </form>
 </div>
 </template>
 <script>
-import axios from "axios"
+import axios from 'axios'
 import {required, email, minLength, sameAs} from 'vuelidate/lib/validators'
 
 export default {
@@ -38,16 +43,28 @@ export default {
       fullname: '',
       email: '',
       password: '',
-      confirmPassword: ''
+      repeatPassword: '',
+      terms: false
     }
   },
   validations: {
     email: {
       required,
       email,
-      unique: val => {
+      async isUnique (val) {
+        console.log('is uni')
         if (val === '') return true
-        return 
+        return axios({
+          method: 'post',
+          url: 'http://localhost:3000/safemydrive/user/validateUser',
+          data: {
+            val
+          }
+        }).then(res => {
+          console.log(res.data.message)
+          console.log(Object.keys(res.data).length)
+          return !res.data.message
+        })
       }
     },
     fullname: {
@@ -55,10 +72,28 @@ export default {
     },
     password: {
       required,
-      minLen: minLength(6)
+      minLength: minLength(6)
     },
-    confirmPassword: {
-      sameAs: sameAs('password')
+    repeatPassword: {
+      sameAsPassword: sameAs('password')
+    },
+    terms: {
+      sameAs: sameAs(() => true)
+    }
+  },
+  methods: {
+    OnRegister () {
+      console.log('onregister clicked fullnaem', this.fullname)
+      axios.post('http://localhost:3000/safemydrive/user/signup', {
+          fullname: this.fullname,
+          email: this.email,
+          password: this.password
+      }).then(res => {
+        if(res.data.message)
+        {
+          this.$router.push({path: '/signin'})
+        }
+      })
     }
   }
 }
@@ -68,8 +103,8 @@ export default {
   .form-group.invalid input {
     background-color: rgb(238, 169, 169);
   }
-    .form-group.invalid label {
-    background-color: rgb(238, 169, 169);
+  .form-group.invalid label {
+    color: red
   }
 body {
   color: #fff;

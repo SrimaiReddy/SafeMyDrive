@@ -83,16 +83,15 @@ LoginSchema.statics.findByUser = function (email){
     return Login.findOne({email}).then((user) => {
         if(!user){
             return Promise.reject();
-        }
+        }        
         return new Promise((resolve, reject) =>{
-            //Use bcrypt.compare to compare password and user.password
                 if(resolve){
                   resolve(user);
                 }else{
                     reject();
                 }
             });
-        });
+        });     
 };
 
 LoginSchema.statics.updateToken = function(email,newtoken) {
@@ -111,12 +110,10 @@ LoginSchema.pre('save', function(next) {
     if(login.isModified('password')){
         bcrypt.genSalt(10, (err,salt) => {
             bcrypt.hash(login.password,salt,(err,hash) => {
-                login.password = hash;
-               
+                login.password = hash;             
                 next();
             })
         });
-
     }else{
         next();
     }
