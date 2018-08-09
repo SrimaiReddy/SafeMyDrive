@@ -3,29 +3,29 @@ const _ = require('lodash');
 var { mongoose } = require('./../../../db/mongoose');
 var { Login } = require('./user.schemas');
 var {tokencheck} = require('./../../../middleware/tokencheck');
+const { SignUpModel } = require('./user.models');
 
-let validateUser = (req, res) => {
-    var body = _.pick(req.body,['val']);
-    console.log(body.val);
-    Login.findByUser(body.val).then((user) =>{
-        if(user)
-        return res.json({ code: 200, message: true});           
-    }).catch((e) => {
-        return res.json({ code: 400, message: false});          
-    });
+let validateEmail = (req, res) => {
+    var body = _.pick(req.body,['email']);
+    SignUpModel.findOne({ email: body.email}).then((user) => {
+        if(!user){
+            return res.json({ code: 400, message: false});
+        }        
+        return new Promise((resolve, reject) =>{
+                if(resolve){
+                    return res.json({ code: 200, message: true});
+                }
+            });
+        });
 }
-module.exports.validateUser = validateUser;
+module.exports.validateEmail = validateEmail;
 
 let signUp = (req,res) => {
     var body = _.pick(req.body,['fullname','email','password']);
-    console.log(body.email);
-    var login = new Login(body);
-    console.log(body.email);
-    login.token = login.generateAuthToken();
-    login.save().then((user) => {
+    var signUpModel = new SignUpModel(body);
+    signUpModel.save().then((user) => {
         if(user)
         return res.json({ code: 200, message: true});           
-//        res.header('x-auth', user.token).send(login);
     }).catch((e) => {
         console.log(e);
         return res.json({ code: 400, message: e});        

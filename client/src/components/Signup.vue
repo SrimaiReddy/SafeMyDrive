@@ -25,7 +25,7 @@
           <label for="terms">Accept Terms of Use</label>
   </div>
 <div class="form-group">
-    <button type="submit" class="btn btn-success btn-lg btn-block" :disabled="$v.$invalid" @click="OnRegister">Register Now</button>
+    <button type="submit" class="btn btn-success btn-lg btn-block" :disabled="this.$v.$invalid" @click="OnRegister">Register Now</button>
 </div>
 <div class="text-center">Already have an account? <a href="#">Sign in</a></div>
 </div>
@@ -51,14 +51,14 @@ export default {
     email: {
       required,
       email,
-      async isUnique (val) {
+      async isUnique (email) {
         console.log('is uni')
-        if (val === '') return true
+        if (email === '') return true
         return axios({
           method: 'post',
           url: 'http://localhost:3000/safemydrive/user/validateUser',
           data: {
-            val
+            email
           }
         }).then(res => {
           console.log(res.data.message)
@@ -85,12 +85,11 @@ export default {
     OnRegister () {
       console.log('onregister clicked fullnaem', this.fullname)
       axios.post('http://localhost:3000/safemydrive/user/signup', {
-          fullname: this.fullname,
-          email: this.email,
-          password: this.password
+        fullname: this.fullname,
+        email: this.email,
+        password: this.password
       }).then(res => {
-        if(res.data.message)
-        {
+        if (res.data.message) {
           this.$router.push({path: '/signin'})
         }
       })
