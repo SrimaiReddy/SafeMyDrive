@@ -1,7 +1,8 @@
 const _ = require('lodash');
-
-var { mongoose } = require('./../../../db/mongoose');
+const bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
 var { Login } = require('./user.schemas');
+var { mongoose } = require('./../../../db/mongoose');
 var {tokencheck} = require('./../../../middleware/tokencheck');
 const { SignUpModel } = require('./user.models');
 
@@ -22,44 +23,53 @@ module.exports.validateEmail = validateEmail;
 
 let signUp = (req,res) => {
     var body = _.pick(req.body,['fullname','email','password']);
-    var signUpModel = new SignUpModel(body);
-    signUpModel.save().then((user) => {
-        if(user)
-        return res.json({ code: 200, message: true});           
-    }).catch((e) => {
-        console.log(e);
-        return res.json({ code: 400, message: e});        
+    var gen_token = jwt.sign({email: body.email },'abc123',{expiresIn:  1 * 60 }).toString();
+    body.token = gen_token;
+    bcrypt.genSalt(10, (err,salt) => {
+        bcrypt.hash(body.password,salt,(err,hash) => {
+            body.password = hash;
+            var signUpModel = new SignUpModel(body);
+            signUpModel.save().then((user) => {
+                if(user)
+                return res.json({ code: 200, message: true});           
+            }).catch((e) => {
+                console.log(e);
+                return res.json({ code: 400, message: e});        
+            })
+        })
     })
 }
-
 module.exports.signUp = signUp;
 
 let signIn = (req,res) => {
     var body = _.pick(req.body,['email','password']);
-    Login.findByCredentials(body.email,body.password).then((login) => {
-        var newToken = login.generateAuthToken();
-        console.log(login.email);
-        return Login.updateToken(login.email,newToken).then((result) => {
-            
-            if(!result){
-                return res.json({ code: 403, message: err });
+    SignUpModel.findOne({email: body.email}).then((result) => {
+        if(!result){
+            return res.json({ code: 200, message: 'Email id not registered!!'});
+        }
+        return bcrypt.compare(body.password,result.password,(err,result) => {
+            if(result){
+                var newToken = jwt.sign({email: body.email },'abc123',{expiresIn:  1 * 60 }).toString();
+                SignUpModel.updateOne({email: body.email},{$set: {token: newToken}}, (err) =>{
+                    if(err){
+                        return res.json({ code: 200, message: 'Unable to generate and update Token'});
+                    }
+                    return res.json({ code: 200, message: "User signin successful", token: newToken });
+                });
+            }else{
+                return res.json({ code: 200, message: "Password Wrong!!"});
             }
-            return res.json({ code: 200, message: "User signin successful", token: newToken });           
         });
-    }).catch((err) =>{
-        res.json({ code: 403, message: err });
     });
 }
-
 module.exports.signIn = signIn;
 
 let details = (req,res) => {    
-    console.log(req.body.sname);
-    Login.findByUser(req.body.sname).then((user) =>{
-        console.log(user.password);
-        return res.send(user.password);
-    }).catch((e) => {
-        res.status(400).send("User details not found!!");
+    SignUpModel.findOne({email: req.param('email')}).then((user) => {
+    if(!user){
+        return  res.status(400).send("User details not found!!");
+    }        
+    return res.send(user.password);
     });
 }
 

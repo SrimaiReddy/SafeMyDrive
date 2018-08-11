@@ -119,6 +119,6 @@ LoginSchema.pre('save', function(next) {
     }
 });
 
-var Login = mongoose.model('Login', LoginSchema);
+var Login = mongoose.model('userdetail', LoginSchema);
 
 module.exports = {Login};

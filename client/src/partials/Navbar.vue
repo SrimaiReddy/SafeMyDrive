@@ -5,16 +5,16 @@
     </div>
     <nav>
       <ul>
-        <li v-if="auth">
+        <li v-if="!auth">
           <router-link to="/signup">Sign Up</router-link>
         </li>
-        <li v-if="auth">
+        <li v-if="!auth">
           <router-link to="/signin">Sign In</router-link>
         </li>
-        <li v-if="!auth">
+        <li v-if="auth">
           <router-link to="/dashboard">Dashboard</router-link>
         </li>
-        <li v-if="!auth">
+        <li v-if="auth">
           <button @click.prevent="onLogout" class="logout">Logout</button>
         </li>
       </ul>
@@ -25,16 +25,24 @@
 <script>
 import User from '@/services/auth'
 export default {
-  computed: {
-    auth () {
-      return User.check() // this.$store.getters.isAuthenticated
+  data () {
+    return {
+      auth: false
     }
+  },
+  mounted () {
+    this.auth = User.check()
   },
   methods: {
     onLogout () {
       localStorage.removeItem('token')
-      this.loggedIn = User.check()
+      this.auth = User.check()
       this.$router.push({ path: '/signin' })
+    }
+  },
+  watch: {
+    '$route' (to, from, next) {
+      this.auth = User.check()
     }
   }
 }

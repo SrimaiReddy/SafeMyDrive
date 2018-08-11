@@ -13,7 +13,7 @@
         <p v-if="!$v.email.isUnique">This email id already registered</p>
     </div>
     <div class="form-group" :class="{invalid: $v.password.$error}">
-        <input type="password" class="form-control" placeholder="Password" required="required" v-model.lazy="password" @blur="$v.password.$model">
+        <input type="password" class="form-control" placeholder="Password" required="required" v-model.lazy="password" @blur="$v.password.$touch()">
         <p v-if="!$v.password.minLength"> Password must have at least {{ $v.password.$params.minLength.min }} letters. </p>
     </div>
     <div class="form-group" :class="{invalid: $v.repeatPassword.$error}">

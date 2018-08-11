@@ -18,6 +18,16 @@ var SignUpModel = mongoose.model('UserDetails', {
         type: String,
         require: true,
         minlength: 6
+    },
+    fullname: {
+        type: String,
+        require: true
+    },
+    token: {
+        require: true,
+        type: String
     }
 });
+
+
 module.exports = {SignUpModel}
