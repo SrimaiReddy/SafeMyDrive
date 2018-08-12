@@ -13,12 +13,12 @@ export default {
     console.log('called created')
     axios({
       method: 'post',
-      url: 'http://localhost:3000/safemydrive/user/details?email=test@gmail.com',
+      url: 'http://localhost:3000/safemydrive/user/details?token=' + window.localStorage.getItem('token'),
       headers: {
         'x-auth': window.localStorage.getItem('token')
       }
     }).then((result) => {
-      this.email = result.data
+      this.email = result.data.email
     })
   }
 }

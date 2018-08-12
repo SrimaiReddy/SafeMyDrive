@@ -65,11 +65,12 @@ let signIn = (req,res) => {
 module.exports.signIn = signIn;
 
 let details = (req,res) => {    
-    SignUpModel.findOne({email: req.param('email')}).then((user) => {
+    console.log(req.param('token'),'email');
+    SignUpModel.findOne({token: req.param('token')}).then((user) => {
     if(!user){
         return  res.status(400).send("User details not found!!");
     }        
-    return res.send(user.password);
+    return res.send(user);
     });
 }
 

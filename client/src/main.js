@@ -9,6 +9,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import Vuelidate from 'vuelidate'
 
 Vue.use(BootstrapVue)
+require('bootstrap')
 Vue.use(Vuelidate)
 Vue.config.productionTip = false
 

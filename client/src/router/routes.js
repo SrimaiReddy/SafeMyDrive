@@ -4,7 +4,8 @@ import Home from '@/components/Home'
 import Signin from '@/components/Signin'
 import Signup from '@/components/Signup'
 import Dashboard from '@/components/Dashboard'
-
+import Profile from '@/components/Profile'
+import Settings from '@/components/Settings'
 Vue.use(Router)
 
 export default new Router({
@@ -28,6 +29,16 @@ export default new Router({
       path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard
+    },
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: Profile
+    },
+    {
+      path: '/settings',
+      name: 'Settings',
+      component: Settings
     }
   ]
 })
