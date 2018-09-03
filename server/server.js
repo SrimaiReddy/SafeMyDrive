@@ -25,10 +25,10 @@ app.use(tokencheck);
 //app.use('/app/admin',adminRoutes);
 app.use('/safemydrive/user', userRoutes);
 
-//catch 404 and forward to error handler
+/* //catch 404 and forward to error handler
 app.use((req, res, next) => {
     res.redirect("/app/admin#/404");
-});
+}); */
 
 app.listen(app.set('port'),()=>{
     console.log('Started up at port: '+ app.get('port'));

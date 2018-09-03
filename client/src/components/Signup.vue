@@ -1,6 +1,6 @@
 <template>
 <div class="signup-form">
-   <form>
+<form>
 <div class="card">
 <div class="card-body">
     <h2>Register</h2>

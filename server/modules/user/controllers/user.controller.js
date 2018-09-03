@@ -23,7 +23,7 @@ module.exports.validateEmail = validateEmail;
 
 let signUp = (req,res) => {
     var body = _.pick(req.body,['fullname','email','password']);
-    var gen_token = jwt.sign({email: body.email },'abc123',{expiresIn:  1 * 60 }).toString();
+    var gen_token = jwt.sign({email: body.email },'abc123',{expiresIn:  200 * 300 }).toString();
     body.token = gen_token;
     bcrypt.genSalt(10, (err,salt) => {
         bcrypt.hash(body.password,salt,(err,hash) => {
@@ -49,7 +49,7 @@ let signIn = (req,res) => {
         }
         return bcrypt.compare(body.password,result.password,(err,result) => {
             if(result){
-                var newToken = jwt.sign({email: body.email },'abc123',{expiresIn:  1 * 60 }).toString();
+                var newToken = jwt.sign({email: body.email },'abc123',{expiresIn:  122 * 10000 }).toString();
                 SignUpModel.updateOne({email: body.email},{$set: {token: newToken}}, (err) =>{
                     if(err){
                         return res.json({ code: 200, message: 'Unable to generate and update Token'});
@@ -70,8 +70,33 @@ let details = (req,res) => {
     if(!user){
         return  res.status(400).send("User details not found!!");
     }        
+    user.password = user.password;
     return res.send(user);
     });
 }
-
 module.exports.details = details;
+
+let checkPassword = (req,res) => {    
+    SignUpModel.findOne({token: req.param('token')}).then((user) => {
+    if(!user){
+        return  res.status(400).send("User details not found!!");
+    }        
+    return bcrypt.compare(req.param('password'),user.password,(err,result) => {
+        if(result){
+            return res.json({ code: 200, message: true});
+        }
+    return res.json({ code: 200, message: false});
+    });
+ });
+}
+module.exports.checkPassword = checkPassword;
+
+let updatePassword = (req,res) => {    
+    SignUpModel.updateOne({email: req.param('email')},{$set: {password: newPassword}}, (err,res) =>{
+    if(!res){
+        return  res.status(400).send("Error");
+    }
+        return res.json({ code: 200, message: true});
+ });
+}
+module.exports.updatePassword = updatePassword;

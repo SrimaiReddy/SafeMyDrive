@@ -6,6 +6,8 @@ import Signup from '@/components/Signup'
 import Dashboard from '@/components/Dashboard'
 import Profile from '@/components/Profile'
 import Settings from '@/components/Settings'
+import SessionTimeout from '@/components/SessionTimeout'
+
 Vue.use(Router)
 
 export default new Router({
@@ -39,6 +41,11 @@ export default new Router({
       path: '/settings',
       name: 'Settings',
       component: Settings
+    },
+    {
+      path: '/sessionTimeout',
+      name: 'SessionTimeout',
+      component: SessionTimeout
     }
   ]
 })
