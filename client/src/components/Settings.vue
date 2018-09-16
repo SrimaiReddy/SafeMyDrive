@@ -4,29 +4,29 @@
    <div class="card-body">
 <form>
   <div class="form-group row">
-    <label for="staticEmail" class="col-sm-5 col-form-label">Current Password:</label>
-    <div class="col-sm-7" :class="{invalid: $v.password.$error}">
+    <label for="staticEmail" class="col-lg-5 col-form-label">Current Password:</label>
+    <div class="col-lg-7" :class="{invalid: $v.password.$error}">
       <input type="password" class="form-control" placeholder="Current Password" v-model.lazy="password" @blur="$v.password.$touch()">
       <p v-if="!$v.password.isUnique">The current password is not matched!!</p>
     </div>
   </div>
   <div class="form-group row">
-    <label for="inputPassword" class="col-sm-5 col-form-label">New Password:</label>
-    <div class="col-sm-7" :class="{invalid: $v.newpassword.$error}">
+    <label for="inputPassword" class="col-lg-5 col-form-label">New Password:</label>
+    <div class="col-lg-7" :class="{invalid: $v.newpassword.$error}">
       <input type="password" class="form-control" placeholder="New Password" v-model="newpassword" @blur="$v.newpassword.$touch()">
       <p v-if="!$v.newpassword.minLength"> Password must have at least {{ $v.newpassword.$params.minLength.min }} letters. </p>
     </div>
   </div>
     <div class="form-group row">
-    <label for="inputPassword" class="col-sm-5 col-form-label">Confirm Password:</label>
-    <div class="col-sm-7" :class="{invalid: $v.repeatPassword.$error}">
+    <label for="inputPassword" class="col-lg-5 col-form-label">Confirm Password:</label>
+    <div class="col-lg-7" :class="{invalid: $v.repeatPassword.$error}">
       <input type="password" class="form-control" placeholder="Confirm Password" v-model="repeatPassword">
         <p v-if="!$v.repeatPassword.sameAsPassword"> Password must be identical. </p>
     </div>
   </div>
   <div class="form-group row">
-      <label for="changePassword" class="col-sm-5 col-form-label"></label>
-    <div class="col-sm-7">
+      <label for="changePassword" class="col-lg-5 col-form-label"></label>
+    <div class="col-lg-7">
     <button type="submit" class="btn btn-primary" :disabled="this.$v.$invalid" @click="changePassword">Change Password</button>
     </div>
 </div>

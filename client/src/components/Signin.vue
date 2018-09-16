@@ -2,7 +2,7 @@
   <div>
     <div class="container">
         <div class="row">
-          <div class="col-md-6 offset-md-3">
+          <div class="col-lg-6 offset-lg-3">
               <div class="card">
                 <div class="card-body">
                   <div class="alert alert-success" v-if="signed && msg" role="alert">

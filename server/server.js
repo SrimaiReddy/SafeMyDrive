@@ -1,12 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express()
+const path = require('path');
 
 // parse body params and attache them to req.body
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 var cors = require('cors')
 app.use(cors());
+
+
+// view engine setup
+app.set('views', path.join(__dirname, '../client/dist'));
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.get('/status', (req,res) =>{
     res.send({
